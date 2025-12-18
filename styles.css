@@ -6,3 +6,47 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+/* Shortcut row container */
+.modal-keys-shortcut-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+	gap: 8px;
+}
+
+/* Binding display element */
+.modal-keys-binding-display {
+	flex: 1;
+	padding: 4px 8px;
+	border: 1px solid var(--border-color, var(--background-modifier-border));
+	border-radius: 4px;
+	font-family: var(--font-family, var(--font-monospace));
+	min-width: 120px;
+	text-align: center;
+}
+
+/* Minus button (remove shortcut) */
+.modal-keys-minus-button {
+	font-size: 18px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	line-height: 1;
+}
+
+/* Plus row container */
+.modal-keys-plus-row {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 4px;
+}
+
+/* Plus button (add shortcut) */
+.modal-keys-plus-button {
+	font-size: 18px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	line-height: 1;
+}

@@ -15,7 +15,7 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Modal Keys Settings" });
+		new Setting(containerEl).setName("Modal keys settings").setHeading();
 
 		// Next keys setting
 		this.createKeybindingsList(
@@ -113,22 +113,16 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 				const shortcutRow = shortcutsContainer.createDiv({
 					cls: "modal-keys-shortcut-row",
 				});
-				shortcutRow.style.display = "flex";
-				shortcutRow.style.alignItems = "center";
-				shortcutRow.style.marginBottom = "8px";
-				shortcutRow.style.gap = "8px";
 
 				// Display current binding
 				const displayEl = shortcutRow.createDiv({
 					cls: "modal-keys-binding-display",
 				});
-				displayEl.style.flex = "1";
-				displayEl.style.padding = "4px 8px";
-				displayEl.style.border = "1px solid var(--background-modifier-border)";
-				displayEl.style.borderRadius = "4px";
-				displayEl.style.fontFamily = "var(--font-monospace)";
-				displayEl.style.minWidth = "120px";
-				displayEl.style.textAlign = "center";
+				displayEl.style.setProperty(
+					"--border-color",
+					"var(--background-modifier-border)",
+				);
+				displayEl.style.setProperty("--font-family", "var(--font-monospace)");
 				displayEl.textContent = keyStr || "(not set)";
 
 				// Record button
@@ -162,7 +156,7 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 					recordButton.textContent = "Press any key...";
 					recordButton.addClass("mod-warning");
 
-					keydownHandler = async (e: KeyboardEvent) => {
+					const handleKeydown = async (e: KeyboardEvent) => {
 						// Ignore modifier-only presses
 						if (
 							e.key === "Control" ||
@@ -184,6 +178,10 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 
 						stopRecording();
 						renderShortcuts(); // Re-render to update display
+					};
+
+					keydownHandler = (e: KeyboardEvent) => {
+						void handleKeydown(e);
 					};
 
 					activeHandlers.add(keydownHandler);
@@ -213,12 +211,9 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 							: "Remove shortcut",
 					},
 				});
-				minusButton.style.fontSize = "18px";
-				minusButton.style.width = "28px";
-				minusButton.style.height = "28px";
-				minusButton.style.padding = "0";
-				minusButton.style.lineHeight = "1";
-				minusButton.addEventListener("click", async (e) => {
+				minusButton.addClass("modal-keys-minus-button");
+
+				const handleMinusClick = async (e: MouseEvent) => {
 					e.preventDefault();
 					stopRecording();
 					const shortcuts = [...this.plugin.settings[settingKey]];
@@ -232,6 +227,10 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 					this.plugin.settings[settingKey] = shortcuts;
 					await this.plugin.saveSettings();
 					renderShortcuts();
+				};
+
+				minusButton.addEventListener("click", (e) => {
+					void handleMinusClick(e);
 				});
 			});
 
@@ -240,21 +239,14 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 				const plusRow = shortcutsContainer.createDiv({
 					cls: "modal-keys-plus-row",
 				});
-				plusRow.style.display = "flex";
-				plusRow.style.justifyContent = "flex-end";
-				plusRow.style.marginTop = "4px";
 
 				const plusButton = plusRow.createEl("button", {
 					text: "+",
 					attr: { "aria-label": "Add shortcut" },
 				});
-				plusButton.style.fontSize = "18px";
-				plusButton.style.width = "28px";
-				plusButton.style.height = "28px";
-				plusButton.style.padding = "0";
-				plusButton.style.lineHeight = "1";
+				plusButton.addClass("modal-keys-plus-button");
 
-				plusButton.addEventListener("click", async (e) => {
+				const handlePlusClick = async (e: MouseEvent) => {
 					e.preventDefault();
 					if (isMaxReached) return;
 
@@ -266,6 +258,10 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 					// Set the index to auto-start recording
 					autoStartRecordingIndex = shortcuts.length - 1;
 					renderShortcuts();
+				};
+
+				plusButton.addEventListener("click", (e) => {
+					void handlePlusClick(e);
 				});
 			}
 		};
