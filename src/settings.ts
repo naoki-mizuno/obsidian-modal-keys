@@ -1,6 +1,7 @@
 export interface ModalKeysSettings {
 	nextKeys: string[];
 	previousKeys: string[];
+	confirmKeys: string[];
 	closeKeys: string[];
 	targetClasses: string;
 	// Legacy fields for backward compatibility (will be migrated)
@@ -12,6 +13,7 @@ export interface ModalKeysSettings {
 export const DEFAULT_SETTINGS: ModalKeysSettings = {
 	nextKeys: ["Ctrl+KeyN"],
 	previousKeys: ["Ctrl+KeyP"],
+	confirmKeys: ["Enter"],
 	closeKeys: ["Escape"],
 	targetClasses: ".suggestion-container\n.modal-container",
 };
@@ -28,6 +30,7 @@ export function migrateSettings(
 		previousKeys: settings.previousKeys || [],
 		closeKeys: settings.closeKeys || [],
 		// Fields that do not need migration
+		confirmKeys: settings.confirmKeys || DEFAULT_SETTINGS.confirmKeys,
 		targetClasses: settings.targetClasses || DEFAULT_SETTINGS.targetClasses,
 	};
 
@@ -97,6 +100,7 @@ export function cleanupShortcutArrays(settings: ModalKeysSettings): void {
 
 	settings.nextKeys = cleanupArray(settings.nextKeys);
 	settings.previousKeys = cleanupArray(settings.previousKeys);
+	settings.confirmKeys = cleanupArray(settings.confirmKeys);
 	settings.closeKeys = cleanupArray(settings.closeKeys);
 }
 

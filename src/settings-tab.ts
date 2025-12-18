@@ -35,6 +35,15 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 			DEFAULT_SETTINGS.previousKeys,
 		);
 
+		// Confirm keys setting
+		this.createKeybindingsList(
+			containerEl,
+			"Confirm",
+			"Trigger to confirm/accept in modal dialogs",
+			"confirmKeys",
+			DEFAULT_SETTINGS.confirmKeys,
+		);
+
 		// Close modal keys setting
 		this.createKeybindingsList(
 			containerEl,
@@ -77,7 +86,7 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 		containerEl: HTMLElement,
 		name: string,
 		desc: string,
-		settingKey: "nextKeys" | "previousKeys" | "closeKeys",
+		settingKey: "nextKeys" | "previousKeys" | "confirmKeys" | "closeKeys",
 		defaultValues: string[],
 	): void {
 		const setting = new Setting(containerEl).setName(name).setDesc(desc);

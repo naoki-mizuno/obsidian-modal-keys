@@ -65,6 +65,23 @@ export default class ModalKeysPlugin extends Plugin {
 			}
 		}
 
+		// Check for "confirm" action - check all shortcuts
+		for (const keyStr of this.settings.confirmKeys) {
+			const binding = parseKeyBinding(keyStr);
+			if (binding && matchesKeyEvent(e, binding)) {
+				e.preventDefault();
+				e.stopPropagation();
+				const target = document.activeElement || document.body;
+				target.dispatchEvent(
+					new KeyboardEvent("keydown", {
+						key: "Enter",
+						code: "Enter",
+					}),
+				);
+				return;
+			}
+		}
+
 		// Check for "close" action - check all shortcuts
 		for (const keyStr of this.settings.closeKeys) {
 			const binding = parseKeyBinding(keyStr);

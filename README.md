@@ -5,7 +5,7 @@ An Obsidian plugin that allows you to customize keyboard shortcuts for navigatin
 ## Features
 
 - **Customizable Navigation Keys**: Remap keys for moving up/down in modal selections (default: Ctrl+n/Ctrl+p)
-- **Modal Close Shortcut**: Configure a custom key to close modals (default: Escape)
+- **Modal Confirm/Close Shortcut**: Configure custom keys to confirm/close in modals (default: Enter/Escape)
 - **Target Specific Elements**: Define which CSS classes trigger the custom keybindings
 - **Multiple Keyboard Shortcuts**: Configure multiple shortcuts for each action (up to 10 per action)
 
@@ -13,6 +13,7 @@ An Obsidian plugin that allows you to customize keyboard shortcuts for navigatin
 
 - **Next (Move Down)**: `Ctrl+n` → Arrow Down
 - **Previous (Move Up)**: `Ctrl+p` → Arrow Up
+- **Confirm**: `Enter` → Confirm/accept in modal
 - **Close Modal**: `Escape` → Close modal
 
 ## Settings
@@ -34,7 +35,7 @@ Navigate to **Settings → Modal Keys Remapper** to customize:
 
 ## How It Works
 
-The plugin listens for keyboard events when specific modal elements are present in the DOM. When you press a configured key combination, it dispatches the corresponding arrow key or escape key event to navigate or close the modal.
+The plugin listens for keyboard events when specific modal elements are present in the DOM. When you press a configured key combination, it dispatches the corresponding arrow key, enter key, or escape key event to navigate, confirm, or close in the modal.
 
 If you would like to add more elements for the shortcut to be effective in, open the developer tool (Ctrl+Shift+i or Cmd+Shift+i) to find the class name, then append that in the Target CSS classes setting.
 
