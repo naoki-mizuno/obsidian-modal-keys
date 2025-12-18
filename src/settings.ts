@@ -1,16 +1,103 @@
 export interface ModalKeysSettings {
-	nextKey: string;
-	previousKey: string;
-	closeKey: string;
+	nextKeys: string[];
+	previousKeys: string[];
+	closeKeys: string[];
 	targetClasses: string;
+	// Legacy fields for backward compatibility (will be migrated)
+	nextKey?: string;
+	previousKey?: string;
+	closeKey?: string;
 }
 
 export const DEFAULT_SETTINGS: ModalKeysSettings = {
-	nextKey: "Ctrl+KeyN",
-	previousKey: "Ctrl+KeyP",
-	closeKey: "Escape",
+	nextKeys: ["Ctrl+KeyN"],
+	previousKeys: ["Ctrl+KeyP"],
+	closeKeys: ["Escape"],
 	targetClasses: ".suggestion-container\n.modal-container",
 };
+
+/**
+ * Migrates old settings format (single strings) to new format (arrays).
+ * This ensures backward compatibility with existing user settings.
+ */
+export function migrateSettings(
+	settings: Partial<ModalKeysSettings>,
+): ModalKeysSettings {
+	const migrated: ModalKeysSettings = {
+		nextKeys: settings.nextKeys || [],
+		previousKeys: settings.previousKeys || [],
+		closeKeys: settings.closeKeys || [],
+		targetClasses:
+			settings.targetClasses ||
+			DEFAULT_SETTINGS.targetClasses,
+	};
+
+	// Migrate from old single-string format if arrays are empty
+	if (migrated.nextKeys.length === 0 && settings.nextKey) {
+		migrated.nextKeys = [settings.nextKey];
+	}
+	if (migrated.previousKeys.length === 0 && settings.previousKey) {
+		migrated.previousKeys = [settings.previousKey];
+	}
+	if (migrated.closeKeys.length === 0 && settings.closeKey) {
+		migrated.closeKeys = [settings.closeKey];
+	}
+
+	// Ensure at least one shortcut per action (use defaults if empty)
+	if (migrated.nextKeys.length === 0) {
+		migrated.nextKeys = [...DEFAULT_SETTINGS.nextKeys];
+	}
+	if (migrated.previousKeys.length === 0) {
+		migrated.previousKeys = [...DEFAULT_SETTINGS.previousKeys];
+	}
+	if (migrated.closeKeys.length === 0) {
+		migrated.closeKeys = [...DEFAULT_SETTINGS.closeKeys];
+	}
+
+	return migrated;
+}
+
+/**
+ * Removes duplicate non-empty entries from shortcut arrays.
+ * Ensures at least one entry remains (even if empty) to maintain minimum requirement.
+ * Note: Multiple empty entries are prevented by the UI (plus button only shows when no empty entries exist).
+ */
+export function cleanupShortcutArrays(settings: ModalKeysSettings): void {
+	const cleanupArray = (arr: string[]): string[] => {
+		if (arr.length === 0) {
+			return [""];
+		}
+
+		// Remove duplicate non-empty entries while preserving order
+		const seen = new Set<string>();
+		const result: string[] = [];
+		let hasEmpty = false;
+
+		for (const item of arr) {
+			const trimmed = item.trim();
+			if (trimmed === "") {
+				// Keep only the first empty entry
+				if (!hasEmpty) {
+					result.push(item);
+					hasEmpty = true;
+				}
+			} else {
+				// Keep only unique non-empty entries
+				if (!seen.has(trimmed)) {
+					seen.add(trimmed);
+					result.push(item);
+				}
+			}
+		}
+
+		// Ensure at least one entry exists
+		return result.length > 0 ? result : [""];
+	};
+
+	settings.nextKeys = cleanupArray(settings.nextKeys);
+	settings.previousKeys = cleanupArray(settings.previousKeys);
+	settings.closeKeys = cleanupArray(settings.closeKeys);
+}
 
 export interface ParsedKeyBinding {
 	ctrl: boolean;

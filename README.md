@@ -1,32 +1,42 @@
-# Obsidian Modal Keys Remapper
+# Modal Keys Remapper
 
 An Obsidian plugin that allows you to customize keyboard shortcuts for navigating modal dialogs and suggestion lists.
 
 ## Features
 
-- **Customizable Navigation Keys**: Remap keys for moving up/down in modal selections (default: Ctrl+N/Ctrl+P)
+- **Customizable Navigation Keys**: Remap keys for moving up/down in modal selections (default: Ctrl+n/Ctrl+p)
 - **Modal Close Shortcut**: Configure a custom key to close modals (default: Escape)
 - **Target Specific Elements**: Define which CSS classes trigger the custom keybindings
-- **Easy Key Capture**: Click "Record" to capture your desired key combination - no need to type it manually
-- **Reset to Defaults**: Quickly restore default settings
+- **Multiple Keyboard Shortcuts**: Configure multiple shortcuts for each action (up to 10 per action)
 
 ## Default Keybindings
 
-- **Next (Move Down)**: `Ctrl+N` → Arrow Down
-- **Previous (Move Up)**: `Ctrl+P` → Arrow Up
+- **Next (Move Down)**: `Ctrl+n` → Arrow Down
+- **Previous (Move Up)**: `Ctrl+p` → Arrow Up
 - **Close Modal**: `Escape` → Close modal
 
 ## Settings
 
 Navigate to **Settings → Modal Keys Remapper** to customize:
 
-1. **Navigation Keys**: Click "Record" next to each action and press your desired key combination
+1. **Navigation Keys**:
+   - Click "Record" next to each shortcut and press your desired key combination
+   - Add multiple shortcuts by clicking the "+" button (appears when all shortcuts are set)
+   - Remove shortcuts by clicking the "−" icon (clears value when only one exists, removes when multiple exist)
+   - Each action supports up to 10 shortcuts
 2. **Target CSS Classes**: Specify which modal elements should respond to your custom keys (one per line)
-   - Default: `.suggestion-container` and `.modal-container`
+    - Default: `.suggestion-container` and `.modal-container`
+
+**Notes**:
+
+- Hotkeys take precedence over this plugin's settings.
+- Duplicate keys are removed automatically.
 
 ## How It Works
 
 The plugin listens for keyboard events when specific modal elements are present in the DOM. When you press a configured key combination, it dispatches the corresponding arrow key or escape key event to navigate or close the modal.
+
+If you would like to add more elements for the shortcut to be effective in, open the developer tool (Ctrl+Shift+i or Cmd+Shift+i) to find the class name, then append that in the Target CSS classes setting.
 
 ## Installation
 

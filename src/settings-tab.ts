@@ -17,31 +17,31 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "Modal Keys Settings" });
 
-		// Next key setting
-		this.createKeybindingSetting(
+		// Next keys setting
+		this.createKeybindingsList(
 			containerEl,
 			"Next (move down)",
 			"Trigger to move down in modal selections",
-			"nextKey",
-			DEFAULT_SETTINGS.nextKey,
+			"nextKeys",
+			DEFAULT_SETTINGS.nextKeys,
 		);
 
-		// Previous key setting
-		this.createKeybindingSetting(
+		// Previous keys setting
+		this.createKeybindingsList(
 			containerEl,
 			"Previous (move up)",
 			"Trigger to move up in modal selections",
-			"previousKey",
-			DEFAULT_SETTINGS.previousKey,
+			"previousKeys",
+			DEFAULT_SETTINGS.previousKeys,
 		);
 
-		// Close modal key setting
-		this.createKeybindingSetting(
+		// Close modal keys setting
+		this.createKeybindingsList(
 			containerEl,
 			"Close modal",
 			"Trigger to close modal dialogs",
-			"closeKey",
-			DEFAULT_SETTINGS.closeKey,
+			"closeKeys",
+			DEFAULT_SETTINGS.closeKeys,
 		);
 
 		// Target CSS classes setting
@@ -73,113 +73,209 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 		);
 	}
 
-	private createKeybindingSetting(
+	private createKeybindingsList(
 		containerEl: HTMLElement,
 		name: string,
 		desc: string,
-		settingKey: "nextKey" | "previousKey" | "closeKey",
-		defaultValue: string,
+		settingKey: "nextKeys" | "previousKeys" | "closeKeys",
+		defaultValues: string[],
 	): void {
 		const setting = new Setting(containerEl).setName(name).setDesc(desc);
 
-		let displayEl: HTMLElement;
-		let recordButton: HTMLButtonElement;
-		let clearButton: HTMLButtonElement;
-		let isRecording = false;
-		let keydownHandler: ((e: KeyboardEvent) => void) | null = null;
+		// Create container for the list of shortcuts
+		const shortcutsContainer = setting.controlEl.createDiv({
+			cls: "modal-keys-shortcuts-container",
+		});
 
-		const updateDisplay = () => {
-			const currentValue = this.plugin.settings[settingKey];
-			displayEl.textContent = currentValue || "(not set)";
+		let autoStartRecordingIndex: number | null = null;
+		// Track active keydown handlers to stop them before re-rendering
+		const activeHandlers: Set<(e: KeyboardEvent) => void> = new Set();
+
+		const stopAllRecordings = () => {
+			activeHandlers.forEach((handler) => {
+				document.removeEventListener("keydown", handler, true);
+			});
+			activeHandlers.clear();
 		};
 
-		const stopRecording = () => {
-			if (keydownHandler) {
-				document.removeEventListener("keydown", keydownHandler, true);
-				keydownHandler = null;
-			}
-			isRecording = false;
-			recordButton.textContent = "Record";
-			recordButton.removeClass("mod-warning");
-		};
+		const renderShortcuts = () => {
+			// Stop all active recordings before re-rendering
+			stopAllRecordings();
+			shortcutsContainer.empty();
+			const shortcuts = this.plugin.settings[settingKey];
+			const isTheOnlyShortcut = shortcuts.length === 1;
+			const isMaxReached = shortcuts.length >= 10;
+			// Check if there are any empty (non-set) shortcuts
+			const hasEmptyShortcut = shortcuts.some((s) => s.trim() === "");
 
-		const startRecording = () => {
-			if (isRecording) {
-				stopRecording();
-				return;
-			}
+			// Render each shortcut
+			shortcuts.forEach((keyStr, index) => {
+				const shortcutRow = shortcutsContainer.createDiv({
+					cls: "modal-keys-shortcut-row",
+				});
+				shortcutRow.style.display = "flex";
+				shortcutRow.style.alignItems = "center";
+				shortcutRow.style.marginBottom = "8px";
+				shortcutRow.style.gap = "8px";
 
-			isRecording = true;
-			recordButton.textContent = "Press any key...";
-			recordButton.addClass("mod-warning");
+				// Display current binding
+				const displayEl = shortcutRow.createDiv({
+					cls: "modal-keys-binding-display",
+				});
+				displayEl.style.flex = "1";
+				displayEl.style.padding = "4px 8px";
+				displayEl.style.border = "1px solid var(--background-modifier-border)";
+				displayEl.style.borderRadius = "4px";
+				displayEl.style.fontFamily = "var(--font-monospace)";
+				displayEl.style.minWidth = "120px";
+				displayEl.style.textAlign = "center";
+				displayEl.textContent = keyStr || "(not set)";
 
-			keydownHandler = async (e: KeyboardEvent) => {
-				// Ignore modifier-only presses
-				if (
-					e.key === "Control" ||
-					e.key === "Alt" ||
-					e.key === "Shift" ||
-					e.key === "Meta"
-				) {
-					return;
+				// Record button
+				const recordButton = shortcutRow.createEl("button", {
+					text: "Record",
+				});
+				let isRecording = false;
+				let keydownHandler: ((e: KeyboardEvent) => void) | null = null;
+
+				const stopRecording = () => {
+					if (keydownHandler) {
+						document.removeEventListener("keydown", keydownHandler, true);
+						activeHandlers.delete(keydownHandler);
+						keydownHandler = null;
+					}
+					isRecording = false;
+					recordButton.textContent = "Record";
+					recordButton.removeClass("mod-warning");
+				};
+
+				const startRecording = () => {
+					// Stop any other recording first
+					stopAllRecordings();
+
+					if (isRecording) {
+						stopRecording();
+						return;
+					}
+
+					isRecording = true;
+					recordButton.textContent = "Press any key...";
+					recordButton.addClass("mod-warning");
+
+					keydownHandler = async (e: KeyboardEvent) => {
+						// Ignore modifier-only presses
+						if (
+							e.key === "Control" ||
+							e.key === "Alt" ||
+							e.key === "Shift" ||
+							e.key === "Meta"
+						) {
+							return;
+						}
+
+						e.preventDefault();
+						e.stopPropagation();
+
+						const formatted = formatKeyEvent(e);
+						const shortcuts = [...this.plugin.settings[settingKey]];
+						shortcuts[index] = formatted;
+						this.plugin.settings[settingKey] = shortcuts;
+						await this.plugin.saveSettings();
+
+						stopRecording();
+						renderShortcuts(); // Re-render to update display
+					};
+
+					activeHandlers.add(keydownHandler);
+					document.addEventListener("keydown", keydownHandler, true);
+				};
+
+				recordButton.addEventListener("click", (e) => {
+					e.preventDefault();
+					startRecording();
+				});
+
+				// Auto-start recording if this is the newly added shortcut
+				if (autoStartRecordingIndex === index) {
+					// Use setTimeout to ensure DOM is ready
+					setTimeout(() => {
+						startRecording();
+						autoStartRecordingIndex = null;
+					}, 0);
 				}
 
-				e.preventDefault();
-				e.stopPropagation();
+				// Minus icon button (clears when single, removes when multiple)
+				const minusButton = shortcutRow.createEl("button", {
+					text: "−",
+					attr: {
+						"aria-label": isTheOnlyShortcut
+							? "Clear shortcut"
+							: "Remove shortcut",
+					},
+				});
+				minusButton.style.fontSize = "18px";
+				minusButton.style.width = "28px";
+				minusButton.style.height = "28px";
+				minusButton.style.padding = "0";
+				minusButton.style.lineHeight = "1";
+				minusButton.addEventListener("click", async (e) => {
+					e.preventDefault();
+					stopRecording();
+					const shortcuts = [...this.plugin.settings[settingKey]];
+					if (isTheOnlyShortcut) {
+						// Clear the value when only one shortcut
+						shortcuts[index] = "";
+					} else {
+						// Remove from array when multiple shortcuts
+						shortcuts.splice(index, 1);
+					}
+					this.plugin.settings[settingKey] = shortcuts;
+					await this.plugin.saveSettings();
+					renderShortcuts();
+				});
+			});
 
-				const formatted = formatKeyEvent(e);
-				this.plugin.settings[settingKey] = formatted;
-				await this.plugin.saveSettings();
+			// Plus button at the bottom - only show when no empty shortcuts exist
+			if (!hasEmptyShortcut && !isMaxReached) {
+				const plusRow = shortcutsContainer.createDiv({
+					cls: "modal-keys-plus-row",
+				});
+				plusRow.style.display = "flex";
+				plusRow.style.justifyContent = "flex-end";
+				plusRow.style.marginTop = "4px";
 
-				updateDisplay();
-				stopRecording();
-			};
+				const plusButton = plusRow.createEl("button", {
+					text: "+",
+					attr: { "aria-label": "Add shortcut" },
+				});
+				plusButton.style.fontSize = "18px";
+				plusButton.style.width = "28px";
+				plusButton.style.height = "28px";
+				plusButton.style.padding = "0";
+				plusButton.style.lineHeight = "1";
 
-			document.addEventListener("keydown", keydownHandler, true);
+				plusButton.addEventListener("click", async (e) => {
+					e.preventDefault();
+					if (isMaxReached) return;
+
+					// Add new empty shortcut and start recording immediately
+					const shortcuts = [...this.plugin.settings[settingKey], ""];
+					this.plugin.settings[settingKey] = shortcuts;
+					await this.plugin.saveSettings();
+
+					// Set the index to auto-start recording
+					autoStartRecordingIndex = shortcuts.length - 1;
+					renderShortcuts();
+				});
+			}
 		};
 
-		// Create custom control container
-		setting.controlEl.empty();
-
-		// Display current binding
-		displayEl = setting.controlEl.createDiv({
-			cls: "modal-keys-binding-display",
-		});
-		displayEl.style.display = "inline-block";
-		displayEl.style.marginRight = "10px";
-		displayEl.style.padding = "4px 8px";
-		displayEl.style.border = "1px solid var(--background-modifier-border)";
-		displayEl.style.borderRadius = "4px";
-		displayEl.style.fontFamily = "var(--font-monospace)";
-		displayEl.style.minWidth = "120px";
-		displayEl.style.textAlign = "center";
-		updateDisplay();
-
-		// Record button
-		recordButton = setting.controlEl.createEl("button", {
-			text: "Record",
-		});
-		recordButton.style.marginRight = "5px";
-		recordButton.addEventListener("click", (e) => {
-			e.preventDefault();
-			startRecording();
-		});
-
-		// Clear button
-		clearButton = setting.controlEl.createEl("button", {
-			text: "Clear",
-		});
-		clearButton.addEventListener("click", async (e) => {
-			e.preventDefault();
-			stopRecording();
-			this.plugin.settings[settingKey] = "";
-			await this.plugin.saveSettings();
-			updateDisplay();
-		});
+		// Initial render
+		renderShortcuts();
 
 		// Add default hint
 		setting.descEl.createDiv({
-			text: `Default: ${defaultValue}`,
+			text: `Default: ${defaultValues.join(", ")}`,
 			cls: "setting-item-description",
 		});
 	}
