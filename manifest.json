@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-modal-keys",
+	"name": "Modal Keys Remapper",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"minAppVersion": "1.10.6",
+	"description": "Allows you to remap the keys used to change selections in modals.",
+	"author": "Naoki Mizuno",
+	"authorUrl": "https://github.com/naoki-mizuno",
 	"isDesktopOnly": false
 }
