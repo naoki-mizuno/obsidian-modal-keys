@@ -1,7 +1,7 @@
 {
 	"id": "modal-keys-remapper",
 	"name": "Modal Keys Remapper",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"minAppVersion": "1.10.6",
 	"description": "Customize keyboard shortcuts for navigating modal dialogs and suggestion lists.",
 	"author": "Naoki Mizuno",
