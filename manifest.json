@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-modal-keys",
+	"id": "modal-keys-remapper",
 	"name": "Modal Keys Remapper",
 	"version": "1.0.0",
 	"minAppVersion": "1.10.6",
-	"description": "Allows you to remap the keys used to change selections in modals.",
+	"description": "Customize keyboard shortcuts for navigating modal dialogs and suggestion lists.",
 	"author": "Naoki Mizuno",
 	"authorUrl": "https://github.com/naoki-mizuno",
 	"isDesktopOnly": false
