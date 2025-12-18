@@ -27,31 +27,32 @@ export function migrateSettings(
 		nextKeys: settings.nextKeys || [],
 		previousKeys: settings.previousKeys || [],
 		closeKeys: settings.closeKeys || [],
-		targetClasses:
-			settings.targetClasses ||
-			DEFAULT_SETTINGS.targetClasses,
+		// Fields that do not need migration
+		targetClasses: settings.targetClasses || DEFAULT_SETTINGS.targetClasses,
 	};
 
 	// Migrate from old single-string format if arrays are empty
-	if (migrated.nextKeys.length === 0 && settings.nextKey) {
-		migrated.nextKeys = [settings.nextKey];
-	}
-	if (migrated.previousKeys.length === 0 && settings.previousKey) {
-		migrated.previousKeys = [settings.previousKey];
-	}
-	if (migrated.closeKeys.length === 0 && settings.closeKey) {
-		migrated.closeKeys = [settings.closeKey];
-	}
-
-	// Ensure at least one shortcut per action (use defaults if empty)
 	if (migrated.nextKeys.length === 0) {
-		migrated.nextKeys = [...DEFAULT_SETTINGS.nextKeys];
+		if (settings.nextKey) {
+			migrated.nextKeys = [settings.nextKey];
+		} else {
+			migrated.nextKeys = [...DEFAULT_SETTINGS.nextKeys];
+		}
 	}
 	if (migrated.previousKeys.length === 0) {
-		migrated.previousKeys = [...DEFAULT_SETTINGS.previousKeys];
+		if (settings.previousKey) {
+			migrated.previousKeys = [settings.previousKey];
+		} else {
+			migrated.previousKeys = [...DEFAULT_SETTINGS.previousKeys];
+		}
 	}
+
 	if (migrated.closeKeys.length === 0) {
-		migrated.closeKeys = [...DEFAULT_SETTINGS.closeKeys];
+		if (settings.closeKey) {
+			migrated.closeKeys = [settings.closeKey];
+		} else {
+			migrated.closeKeys = [...DEFAULT_SETTINGS.closeKeys];
+		}
 	}
 
 	return migrated;
