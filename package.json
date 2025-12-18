@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-modal-keys",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Allows you to remap the keys used to change selections in modals.",
 	"main": "main.js",
 	"scripts": {
