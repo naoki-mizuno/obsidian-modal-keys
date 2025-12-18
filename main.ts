@@ -36,7 +36,9 @@ export default class ModalKeysPlugin extends Plugin {
 			const binding = parseKeyBinding(keyStr);
 			if (binding && matchesKeyEvent(e, binding)) {
 				e.preventDefault();
-				document.dispatchEvent(
+				e.stopPropagation();
+				const target = document.activeElement || document.body;
+				target.dispatchEvent(
 					new KeyboardEvent("keydown", {
 						key: "ArrowDown",
 						code: "ArrowDown",
@@ -51,7 +53,9 @@ export default class ModalKeysPlugin extends Plugin {
 			const binding = parseKeyBinding(keyStr);
 			if (binding && matchesKeyEvent(e, binding)) {
 				e.preventDefault();
-				document.dispatchEvent(
+				e.stopPropagation();
+				const target = document.activeElement || document.body;
+				target.dispatchEvent(
 					new KeyboardEvent("keydown", {
 						key: "ArrowUp",
 						code: "ArrowUp",
@@ -66,7 +70,9 @@ export default class ModalKeysPlugin extends Plugin {
 			const binding = parseKeyBinding(keyStr);
 			if (binding && matchesKeyEvent(e, binding)) {
 				e.preventDefault();
-				document.dispatchEvent(
+				e.stopPropagation();
+				const target = document.activeElement || document.body;
+				target.dispatchEvent(
 					new KeyboardEvent("keydown", {
 						key: "Escape",
 						code: "Escape",
