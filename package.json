@@ -1,5 +1,5 @@
 {
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"name": "obsidian-modal-keys-remapper",
 	"description": "Customize keyboard shortcuts for navigating modal dialogs and suggestion lists.",
 	"type": "module",
