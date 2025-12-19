@@ -5,7 +5,7 @@ An Obsidian plugin that allows you to customize keyboard shortcuts for navigatin
 ## Features
 
 - **Customizable Navigation Keys**: Remap keys for moving up/down in modal selections (default: Ctrl+n/Ctrl+p)
-- **Modal Confirm/Close Shortcut**: Configure custom keys to confirm/close in modals (default: Enter/Escape)
+- **Modal Confirm/Close Shortcut**: Configure custom keys to confirm/close in modals (default: Obsidian default)
 - **Target Specific Elements**: Define which CSS classes trigger the custom keybindings
 - **Multiple Keyboard Shortcuts**: Configure multiple shortcuts for each action (up to 10 per action)
 
@@ -13,18 +13,31 @@ An Obsidian plugin that allows you to customize keyboard shortcuts for navigatin
 
 - **Next (Move Down)**: `Ctrl+n` → Arrow Down
 - **Previous (Move Up)**: `Ctrl+p` → Arrow Up
-- **Confirm**: `Enter` → Confirm/accept in modal
-- **Close Modal**: `Escape` → Close modal
+- **Confirm**: `not set` → Uses Obsidian default (Enter) to confirm/accept in modal
+- **Close Modal**: `not set` → Uses Obsidian default (Escape) to close modal
+
+### Note About Explicitly Setting the Confirm/Close Shortcuts
+
+You may observe some issues when you explicitly set the confirm/close
+shortcuts to the Obsidian default keys (e.g., <kbd>Enter</kbd> for confirm,
+and <kbd>Escape</kbd> for close) **and** set a target that makes the shortcut
+effective in the editor (e.g., `.app-container` or `.cm-editor`).
+In this case, the key is processed twice (once by the Obsidian app, and once
+more due to this plugin sending the <kbd>Enter</kbd> key event), resulting in
+two lines added from a single <kbd>Enter</kbd> key press.
+
+In short, it is recommended to only set shortcuts that you would like to use
+and leave unused actions unset.
 
 ## Settings
 
 Navigate to **Settings → Modal Keys Remapper** to customize:
 
 1. **Navigation Keys**:
-   - Click "Record" next to each shortcut and press your desired key combination
-   - Add multiple shortcuts by clicking the "+" button (appears when all shortcuts are set)
-   - Remove shortcuts by clicking the "−" icon (clears value when only one exists, removes when multiple exist)
-   - Each action supports up to 10 shortcuts
+    - Click "Record" next to each shortcut and press your desired key combination
+    - Add multiple shortcuts by clicking the "+" button (appears when all shortcuts are set)
+    - Remove shortcuts by clicking the "−" icon (clears value when only one exists, removes when multiple exist)
+    - Each action supports up to 10 shortcuts
 2. **Target CSS Classes**: Specify which modal elements should respond to your custom keys (one per line)
     - Default: `.suggestion-container` and `.modal-container`
 

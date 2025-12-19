@@ -274,8 +274,12 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 		renderShortcuts();
 
 		// Add default hint
+		let defaultHint = "not set (Obsidian default)";
+		if (defaultValues.length > 0 && defaultValues[0] !== "") {
+			defaultHint = defaultValues.join(", ");
+		}
 		setting.descEl.createDiv({
-			text: `Default: ${defaultValues.join(", ")}`,
+			text: `Default: ${defaultHint}`,
 			cls: "setting-item-description",
 		});
 	}

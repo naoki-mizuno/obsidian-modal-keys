@@ -13,8 +13,8 @@ export interface ModalKeysSettings {
 export const DEFAULT_SETTINGS: ModalKeysSettings = {
 	nextKeys: ["Ctrl+KeyN"],
 	previousKeys: ["Ctrl+KeyP"],
-	confirmKeys: ["Enter"],
-	closeKeys: ["Escape"],
+	confirmKeys: [""],
+	closeKeys: [""],
 	targetClasses: ".suggestion-container\n.modal-container",
 };
 
