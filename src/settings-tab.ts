@@ -15,7 +15,7 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		new Setting(containerEl).setName("Modal keys settings").setHeading();
+		new Setting(containerEl).setName("Modal keys").setHeading();
 
 		// Next keys setting
 		this.createKeybindingsList(
@@ -127,11 +127,6 @@ export class ModalKeysSettingTab extends PluginSettingTab {
 				const displayEl = shortcutRow.createDiv({
 					cls: "modal-keys-binding-display",
 				});
-				displayEl.style.setProperty(
-					"--border-color",
-					"var(--background-modifier-border)",
-				);
-				displayEl.style.setProperty("--font-family", "var(--font-monospace)");
 				displayEl.textContent = keyStr || "(not set)";
 
 				// Record button

@@ -105,7 +105,7 @@ export default class ModalKeysPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		const loadedData = await this.loadData();
+		const loadedData = (await this.loadData()) as Partial<ModalKeysSettings> | null;
 		this.settings = loadedData ? migrateSettings(loadedData) : DEFAULT_SETTINGS;
 		// Save migrated settings to ensure old format is converted
 		await this.saveSettings();

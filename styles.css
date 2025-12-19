@@ -19,9 +19,9 @@ If your plugin does not need CSS, delete this file.
 .modal-keys-binding-display {
 	flex: 1;
 	padding: 4px 8px;
-	border: 1px solid var(--border-color, var(--background-modifier-border));
+	border: 1px solid var(--background-modifier-border);
 	border-radius: 4px;
-	font-family: var(--font-family, var(--font-monospace));
+	font-family: var(--font-monospace);
 	min-width: 120px;
 	text-align: center;
 }
